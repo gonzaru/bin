@@ -12,6 +12,6 @@ done
 # get window manager name property
 xprop -root -f WM_NAME "8u" | \
 awk -F '=' '/WM_NAME\(STRING\) = / { 
-  gsub(/ "|"$/, "", $2)
+  gsub(/^ "|"$/, "", $2)
   print $2 
 }'
