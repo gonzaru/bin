@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# ensure that these programs exist
+programs="setxkbmap awk"
+for program in $programs; do
+  if ! command -v "$program" >/dev/null 2>&1; then
+    echo "Error: program $program is missing!"
+    exit 1
+  fi
+done
+
+# reset keymap options
+setxkbmap -option
+
+# get current layout
+curlayout=$(setxkbmap -query | awk '/^layout:/ { print $2 }')
+
+# toggle between english and russian keyboard
+if [ "$curlayout" = "us" ]; then
+  layout="ru"
+else
+  layout="us"
+fi
+
+# set the keyboard
+setxkbmap -layout $layout \
+          -option caps:super \
+          -option shift:both_capslock_cancel \
+          -option ctrl:swap_lalt_lctl \
+          -option ctrl:ralt_rctrl \
+          -option ctrl:rctrl_ralt \
+          -option compose:paus

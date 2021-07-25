@@ -1,0 +1,11 @@
+#!/bin/sh
+
+# ensure that these programs exist
+program="xclip"
+if ! command -v "$program" >/dev/null 2>&1; then
+  echo "Error: program $program is missing!"
+  exit 1
+fi
+
+# primary is now clipboard
+xclip -o | xclip -i -selection clipboard 

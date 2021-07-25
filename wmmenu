@@ -1,0 +1,32 @@
+#!/bin/sh
+
+# ensure that these programs exist
+programs="dmenu grep"
+for program in $programs; do
+  if ! command -v "$program" >/dev/null 2>&1; then
+    echo "Error: program $program is missing!"
+    exit 1
+  fi
+done
+
+# menu
+programs="firefox
+chromium-browser
+gvim
+pavucontrol
+rox
+pcmanfm
+filezilla
+soffice
+dmkill
+xkill
+gimp
+geeqie
+vlc"
+
+# select program and launch it
+num_programs=$(echo "$programs" | grep "" -c)
+program=$(echo "$programs" | dmenu -l "$num_programs")
+if [ -n "$program" ]; then
+  exec $program
+fi
