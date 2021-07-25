@@ -12,7 +12,7 @@ done
 # reset keymap options
 setxkbmap -option
 
-# get current layout
+# get current keyboard layout
 curlayout=$(setxkbmap -query | awk '/^layout:/ { print $2 }')
 
 # toggle between english and russian keyboard
