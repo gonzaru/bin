@@ -1,4 +1,7 @@
 #!/bin/sh
 
+# strict mode
+set -eu
+
 # used with sleep on ~/.xinitrc to show dwm system date correctly
 exec echo $((60 - $(/bin/date +%S | sed 's/^0\([0-9]\)/\1/')))

@@ -1,13 +1,7 @@
 #!/bin/sh
 
-# ensure that these programs exist
-programs="xprop awk"
-for program in $programs; do
-  if ! command -v "$program" >/dev/null 2>&1; then
-    echo "Error: program $program is missing!"
-    exit 1
-  fi
-done
+# strict mode
+set -eu
 
 # get window manager name property
 xprop -root -f WM_NAME "8u" | \

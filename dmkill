@@ -1,13 +1,7 @@
 #!/bin/sh
 
-# ensure that these programs exist
-programs="wmctrl dmenu wc ps cut kill"
-for program in $programs; do
-  if ! command -v "$program" >/dev/null 2>&1; then
-    echo "Error: program $program is missing!"
-    exit 1
-  fi
-done
+# strict mode
+set -eu
 
 # get windows processes
 procs=$(wmctrl -p -l -x)
@@ -19,12 +13,16 @@ fi
 # terminate selected window process
 num_procs=$(echo "$procs" | wc -l)
 pid=$(echo "$procs" | cut -d ' ' -f4- | dmenu -l "$num_procs" | cut -d ' ' -f1)
-if [ -n "$pid" ] && [ "$pid" -eq "$pid" ] 2>/dev/null; then
-  kill "$pid"
-  # send SIGKILL if pid still exists
-  if ps -p "$pid" >/dev/null 2>&1; then
-    kill -KILL "$pid"
+if [ -n "$pid" ]; then
+  # check if numeric pid
+  if [ "$pid" -eq "$pid" ] 2>/dev/null; then
+    kill "$pid"
+    # send SIGKILL if pid still exists
+    if ps -p "$pid" >/dev/null 2>&1; then
+      kill -KILL "$pid"
+    fi
+  else
+    echo "Error: pid is non-numeric"
+    exit 1
   fi
-else
-  echo "Error: pid is empty or non-numeric"
 fi
