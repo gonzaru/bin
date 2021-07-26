@@ -3,11 +3,16 @@
 # strict mode
 set -eu
 
+# shows the message and exits the program
+panic() {
+  echo "$@" 1>&2
+  exit 1
+}
+
 # get windows processes
 procs=$(wmctrl -p -l -x)
 if [ -z "$procs" ]; then
-  echo "Error: no processes found"
-  exit 1
+  panic "Error: no processes found"
 fi
 
 # terminate selected window process
@@ -15,14 +20,11 @@ num_procs=$(echo "$procs" | wc -l)
 pid=$(echo "$procs" | cut -d ' ' -f4- | dmenu -l "$num_procs" | cut -d ' ' -f1)
 if [ -n "$pid" ]; then
   # check if pid is numeric
-  if [ "$pid" -eq "$pid" ] 2>/dev/null; then
-    kill "$pid"
-    # send SIGKILL if pid still exists
-    if ps -p "$pid" >/dev/null 2>&1; then
-      kill -KILL "$pid"
-    fi
-  else
-    echo "Error: pid is non-numeric"
-    exit 1
+  if ! [ "$pid" -eq "$pid" ] 2>/dev/null; then
+    panic "Error: pid is non-numeric"
+  fi
+  kill "$pid"
+  if ps -p "$pid" >/dev/null 2>&1; then
+    kill -KILL "$pid"
   fi
 fi
