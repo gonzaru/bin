@@ -14,7 +14,7 @@ fi
 num_procs=$(echo "$procs" | wc -l)
 pid=$(echo "$procs" | cut -d ' ' -f4- | dmenu -l "$num_procs" | cut -d ' ' -f1)
 if [ -n "$pid" ]; then
-  # check if numeric pid
+  # check if pid is numeric
   if [ "$pid" -eq "$pid" ] 2>/dev/null; then
     kill "$pid"
     # send SIGKILL if pid still exists
