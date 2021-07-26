@@ -1,0 +1,62 @@
+#!/bin/sh
+
+# strict mode
+set -eu
+
+# settings
+progname="volume"
+# value for master volume
+volmaster="90"
+# value for increase/decrease volume
+voladjust="5"
+
+# help usage info
+help() {
+  echo "usage: $progname up|down|toggle|restore"
+}
+
+# shows the message and exits the program
+die() {
+  echo "$@" 1>&2
+  exit 1
+}
+
+# display help if no arguments supplied
+if [ $# -ne 1 ]; then
+  die "$(help)"
+fi
+
+# command line argument
+arg="$1"
+
+# display help if no expected arguments supplied
+case $arg in
+  up|down|restore|toggle)
+    ;;
+  *)
+    # unknown argument
+    die "$(help)"
+    ;;
+esac
+
+# default sink
+sink=$(pacmd list-sinks | awk '/\* index: / { print $NF }')
+if ! [ "$sink" -eq "$sink" ] 2>/dev/null; then
+  die "Error: sink is empty or non-numeric"
+fi
+
+# options
+case $arg in
+  up)
+    pactl set-sink-volume "$sink" +${voladjust}%
+    ;;
+  down)
+    pactl set-sink-volume "$sink" -${voladjust}%
+    ;;
+  restore)
+    pactl set-sink-volume "$sink" ${volmaster}%
+    ;;
+  toggle)
+    pactl set-sink-mute "$sink" toggle
+    ;;
+esac
