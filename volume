@@ -12,7 +12,7 @@ voladjust="5"
 
 # help usage info
 help() {
-  echo "usage: $progname up|down|toggle|restore"
+  echo "Usage: $progname up|down|toggle|restore"
 }
 
 # shows the message and exits the program
