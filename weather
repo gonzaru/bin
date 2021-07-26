@@ -1,0 +1,21 @@
+#!/bin/sh
+
+progname="weather"
+city="$*"
+
+# display help if no arguments supplied
+if [ $# -eq 0 ]; then
+  echo "usage: $progname city"
+  exit 1
+fi
+
+# ensure that these programs exist
+programs="curl awk"
+for program in $programs; do
+  if ! command -v "$program" >/dev/null 2>&1; then
+    echo "Error: program $program is missing!"
+    exit 1
+  fi
+done
+
+curl -s http://wttr.in/"${city}"?0mT | awk '{ if (NR == 4) print $(NF-1),$NF }'
