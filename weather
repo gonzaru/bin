@@ -18,4 +18,5 @@ for program in $programs; do
   fi
 done
 
+# get city weather
 curl -s http://wttr.in/"${city}"?0mT | awk '{ if (NR == 4) print $(NF-1),$NF }'
