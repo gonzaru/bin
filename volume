@@ -16,14 +16,14 @@ help() {
 }
 
 # shows the message and exits the program
-die() {
+panic() {
   echo "$@" 1>&2
   exit 1
 }
 
 # display help if no arguments supplied
 if [ $# -ne 1 ]; then
-  die "$(help)"
+  panic "$(help)"
 fi
 
 # command line argument
@@ -35,14 +35,14 @@ case $arg in
     ;;
   *)
     # unknown argument
-    die "$(help)"
+    panic "$(help)"
     ;;
 esac
 
 # default sink
 sink=$(pacmd list-sinks | awk '/\* index: / { print $NF }')
 if ! [ "$sink" -eq "$sink" ] 2>/dev/null; then
-  die "Error: sink is empty or non-numeric"
+  panic "Error: sink is empty or non-numeric"
 fi
 
 # options
