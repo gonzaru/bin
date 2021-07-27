@@ -1,0 +1,20 @@
+#!/bin/sh
+
+# strict mode
+set -eu
+
+# default window manager
+wm="dwm"
+wmdir="${HOME}/opt/dwm-git"
+
+cd "$wmdir" || exit 1
+
+# confirm reload
+if [ "$(printf 'no\nyes' | dmenu -p "Do you want to reload ${wm}?")" = "yes" ]; then
+  if ! ./make.sh; then
+    echo "$wm compile error!" | dmenu
+    exit 1
+  fi
+  # simulate keyboard press to quit $wm
+  xdotool key Super_L+Shift_L+q
+fi
