@@ -42,7 +42,7 @@ esac
 # default sink
 sink=$(pacmd list-sinks | awk '/\* index: / { print $NF }')
 if ! [ "$sink" -eq "$sink" ] 2>/dev/null; then
-  panic "Error: sink is empty or non-numeric"
+  panic "Error: default sink is non-numeric"
 fi
 
 # options
