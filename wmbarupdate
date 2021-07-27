@@ -1,0 +1,10 @@
+#!/bin/sh
+
+# strict mode
+set -eu
+
+# make sure that X is running
+if [ -n "$DISPLAY" ]; then
+  # print output for window manager
+  exec xsetroot -name "$(wmbarshow)"
+fi
