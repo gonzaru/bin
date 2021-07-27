@@ -5,7 +5,7 @@ set -eu
 
 # default window manager
 wm="dwm"
-wmdir="${HOME}/opt/dwm-git"
+wmdir="${HOME}/opt/dwm"
 
 cd "$wmdir" || exit 1
 
