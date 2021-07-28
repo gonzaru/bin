@@ -4,11 +4,9 @@
 set -eu
 
 # settings
-progname="volume"
-# value for master volume
-volmaster="90"
-# value for increase/decrease volume
-voladjust="5"
+progname="volume" # program name
+volmaster="90"    # default master volume
+voladjust="5"     # value to increase/decrease volume
 
 # help usage info
 help() {

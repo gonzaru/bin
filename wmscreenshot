@@ -1,0 +1,78 @@
+#!/bin/sh
+
+# strict mode
+set -eu
+
+# settings
+progname="wmscreenshot"                       # program name
+shotdir=${HOME}/screenshots                   # directory to store screenshot files
+extension="png"                               # default screenshot extension
+curdate=$(date '+%Y%m%d-%H%M%S')              # current date
+shotfile="screenshot-${curdate}.${extension}" # screenshot name
+quality=75                                    # quality of the the screenshot, default: 75
+
+# help usage info
+help() {
+  echo "Usage: $progname select|full"
+}
+
+# shows the message and exits the program
+panic() {
+  echo "$@" 1>&2
+  exit 1
+}
+
+# display help if no arguments supplied
+if [ $# -lt 1 ]; then
+  panic "$(help)"
+fi
+
+# rename screenshot to a custom name
+renameshot() {
+  resnew=$(printf 'no\nyes' | dmenu -p "Do you want to rename ${shotfile}?")
+  if [ "$resnew" = "no" ]; then
+    return
+  fi
+  while :; do
+    msg="press Esc or Enter to exit"
+    newname=$(echo "$msg" | dmenu -p "Rename ${shotfile} to:")
+    # empty Esc/Enter or valid extension
+    if [ -z "$newname" ] || [ "$newname" = "$msg" ] \
+      || echo "$newname" | grep -q "\.${extension}$"; then
+      break
+    fi
+    # confirm valid extension
+    resnoext=$(
+      printf 'no\nyes' | dmenu -p "Are you sure to rename ${newname} without a valid extension? (${extension})"
+    )
+    if [ "$resnoext" = "yes" ]; then
+      break
+    fi
+  done
+  if [ -n "$newname" ] && [ "$newname" != "$msg" ]; then
+    mv "${shotdir}/${shotfile}" "${shotdir}/${newname}"
+  fi
+}
+
+# command line argument
+arg="$1"
+
+# make sure that $shotdir exists
+if [ ! -d "$shotdir" ]; then
+  panic "directory $shotdir does not exist"
+fi
+
+# options
+case $arg in
+  select)
+    scrot -s -q $quality "${shotdir}/${shotfile}"
+    renameshot
+    ;;
+  full)
+    scrot -q $quality "${shotdir}/${shotfile}"
+    renameshot
+    ;;
+  *)
+    panic "$(help)"
+    ;;
+esac
