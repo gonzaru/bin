@@ -65,6 +65,8 @@ fi
 # options
 case $arg in
   select)
+    # add small time to avoid giblib error: couldn't grab keyboard
+    sleep 0.1
     scrot -s -q $quality "${shotdir}/${shotfile}"
     renameshot
     ;;
