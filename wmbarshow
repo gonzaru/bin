@@ -3,5 +3,5 @@
 # strict mode
 set -eu
 
-# print date for window manager
+# print date for dwm status bar
 date +"%a %b %e %H:%M"

@@ -5,6 +5,6 @@ set -eu
 
 # make sure that X is running
 if [ -n "$DISPLAY" ]; then
-  # print output for window manager
+  # print output for dwm status bar
   exec xsetroot -name "$(wmbarshow)"
 fi
