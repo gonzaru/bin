@@ -4,4 +4,4 @@
 set -eu
 
 # used with sleep on ~/.xinitrc to print dwm system date correctly
-exec echo $((60 - $(/bin/date +%S | sed 's/^0\([0-9]\)/\1/')))
+echo $((60 - $(/bin/date +%S | sed 's/^0\([0-9]\)/\1/')))
