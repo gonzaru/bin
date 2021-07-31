@@ -36,14 +36,17 @@ renameshot() {
   while :; do
     msg="press Esc or Enter to exit"
     newname=$(echo "$msg" | dmenu -p "Rename '${shotfile}' to:")
-    # add default extension if extension was not set
-    if [ -n "$newname" ] && [ "$newname" != "$msg" ] \
-    && [ "$newname" = "$(echo "$newname" | cut -d '.' -f1)" ]; then
-      newname="${newname}.${extension}"
+    # empty or Esc/Enter
+    if [ -z "$newname" ] || [ "$newname" = "$msg" ]; then
+      return
     fi
-    # empty Esc/Enter or valid extension
-    if [ -z "$newname" ] || [ "$newname" = "$msg" ] \
-      || echo "$newname" | grep -q "\.${extension}$"; then
+    # valid extension
+    if echo "$newname" | grep -q "\.${extension}$"; then
+      break
+    fi
+    # add default extension if extension was not set
+    if [ "$newname" = "$(echo "$newname" | cut -d '.' -f1)" ]; then
+      newname="${newname}.${extension}"
       break
     fi
     # confirm valid extension
@@ -54,9 +57,7 @@ renameshot() {
       break
     fi
   done
-  if [ -n "$newname" ] && [ "$newname" != "$msg" ]; then
-    mv "${shotdir}/${shotfile}" "${shotdir}/${newname}"
-  fi
+  mv "${shotdir}/${shotfile}" "${shotdir}/${newname}"
 }
 
 # command line argument
