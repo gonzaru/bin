@@ -18,10 +18,11 @@ else
 fi
 
 # set the keyboard
-setxkbmap -layout $layout \
-          -option caps:super \
-          -option shift:both_capslock_cancel \
-          -option ctrl:swap_lalt_lctl \
+setxkbmap -model pc101 \
+          -rules evdev \
+          -layout $layout \
+          -option caps:escape \
+          -option ctrl:swap_lalt_lctl_lwin \
           -option ctrl:ralt_rctrl \
           -option ctrl:rctrl_ralt \
           -option compose:paus
