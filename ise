@@ -1,0 +1,96 @@
+#!/usr/bin/env bash
+# Distributed under the terms of the GNU General Public License v3
+
+# strict mode
+set -eu
+
+# help usage info
+function help() {
+	progname="ise"
+
+	echo "Usage: # bing, duckduckgo, google, searx, yandex"
+	echo "       $progname b|d|g|s|y string to search"
+	echo "       $progname d what is a text web browser?"
+	echo "       $progname www.example.org"
+	echo "       $progname"
+}
+
+# shows the message and exits the program
+function panic() {
+	echo "$@" 1>&2
+	exit 1
+}
+
+# lynx, links, w3m etc.
+browser="lynx"
+
+# default startup page
+default_page="https://lite.duckduckgo.com"
+
+# custom browser options
+declare -a browser_args
+case $browser in
+  lynx)
+	  # needs a fake user agent to avoid some blocks
+	  lynx_ua="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1 Lynx"
+	  browser_args=("-useragent=${lynx_ua}" "-cfg=${HOME}/.lynx/lynx.cfg" "-lss=${HOME}/.lynx/lynx.lss")
+	  ;;
+  *)
+	  # other browsers
+	  ;;
+esac
+
+# checks if browser exists
+if ! hash "$browser" 2>/dev/null; then
+	panic "Error: $browser not found"
+fi
+
+# search engine/url or default page
+action=$([[ $# -gt 0 ]] && echo "$1" || echo "$default_page")
+
+# query
+search_string="${*:2}"
+
+# search engine
+case $action in
+  b | bing)
+	  # Microsoft Bing
+	  url="https://www.bing.com/search?q=$search_string"
+	  ;;
+  d | ddg | duckduckgo)
+	  # DuckDuckGo
+	  url="https://lite.duckduckgo.com/lite?q=$search_string"
+	  ;;
+  g | google)
+	  # Google
+	  url="https://google.com/search?q=$search_string"
+	  ;;
+  s | searx)
+	  # searX
+	  url="https://searx.info/search?q=$search_string"
+	  ;;
+  y | yandex)
+	  # Яндекс (русская версия)
+	  url="https://yandex.ru/search/?text=$search_string"
+	  ;;
+  -h | -help | --help)
+	  help
+	  exit $?
+	  ;;
+  *)
+	  # if contains a valid scheme/domain, launch it without search
+	  regex="^((http|https)://)?([a-zA-Z0-9][a-zA-Z0-9-]{0,61}[a-zA-Z0-9]\.)+[a-zA-Z]{2,}/?.*"
+	  if ! [[ "$action" =~ $regex ]]; then
+		  echo "Error: unknown search engine '$action'"
+		  panic "$(help)"
+	  fi
+	  url="$action"
+	  ;;
+esac
+
+# run the browser
+if ((${#browser_args[@]})); then
+	exec "$browser" "${browser_args[@]}" "$url"
+else
+	exec "$browser" "$url"
+fi
