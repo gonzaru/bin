@@ -6,13 +6,11 @@ set -eu
 
 # help usage info
 function help() {
-  progname="ise"
-
-  echo "Usage: # bing, duckduckgo, google, searx, wikipedia, yandex"
-  echo "       $progname b|d|g|s|w|y string to search"
-  echo "       $progname d what is a text web browser?"
-  echo "       $progname www.example.org"
-  echo "       $progname"
+  echo "Usage: # bing, duckduckgo, google, qwant, searx, wikipedia, yandex"
+  echo "       ise b|d|g|q|s|w|y string to search"
+  echo "       ise d what is a text web browser?"
+  echo "       ise www.example.org"
+  echo "       ise"
 }
 
 # shows the message and exits the program
@@ -64,6 +62,10 @@ case $action in
   g | google)
     # Google
     url="https://google.com/search?q=$search_string"
+    ;;
+  q | qwant)
+    # Qwant
+    url="https://www.qwant.com/?q=$search_string"
     ;;
   s | searx)
     # searX
