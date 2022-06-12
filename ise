@@ -8,8 +8,8 @@ set -eu
 function help() {
   progname="ise"
 
-  echo "Usage: # bing, duckduckgo, google, searx, yandex"
-  echo "       $progname b|d|g|s|y string to search"
+  echo "Usage: # bing, duckduckgo, google, searx, wikipedia, yandex"
+  echo "       $progname b|d|g|s|w|y string to search"
   echo "       $progname d what is a text web browser?"
   echo "       $progname www.example.org"
   echo "       $progname"
@@ -31,7 +31,7 @@ default_page="https://lite.duckduckgo.com"
 declare -a browser_args
 case $browser in
   lynx)
-    # needs a fake user agent to avoid some blocks
+    # needs a fake user agent to bypass some website blocking
     lynx_ua="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_8_0) AppleWebKit/537.1 (KHTML, like Gecko) Chrome/21.0.1180.79 Safari/537.1 Lynx"
     browser_args=("-useragent=${lynx_ua}" "-cfg=${HOME}/.lynx/lynx.cfg" "-lss=${HOME}/.lynx/lynx.lss")
     ;;
@@ -68,6 +68,10 @@ case $action in
   s | searx)
     # searX
     url="https://searx.info/search?q=$search_string"
+    ;;
+  w | wiki | wikipedia)
+    # Wikipedia
+    url="https://en.wikipedia.org/wiki/Special:Search?search=$search_string"
     ;;
   y | yandex)
     # Яндекс (русская версия)
