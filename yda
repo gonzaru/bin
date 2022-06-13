@@ -1,0 +1,33 @@
+#!/bin/sh
+# Distributed under the terms of the GNU General Public License v3
+
+# strict mode
+set -eu
+
+# url as arg1
+if [ $# -ne 1 ]; then
+  echo "Usage:"
+  echo "  yda url"
+  exit 1
+fi
+url="$1"
+
+# output file
+if echo "$url" | grep -E "[?&]+list="; then
+  playlist="--yes-playlist"
+  output="%(playlist)s/%(playlist_index)s-%(title)s.%(ext)s"
+else
+  playlist="--no-playlist"
+  output="%(title)s.%(ext)s"
+fi
+
+# download the audio file
+exec youtube-dl \
+  --ignore-errors \
+  --prefer-ffmpeg \
+  --audio-quality 0 \
+  --format bestaudio \
+  --extract-audio \
+  --audio-format mp3 \
+  "$playlist" \
+  --output "$output" "$url"
