@@ -4,7 +4,7 @@
 # strict mode
 set -eu
 
-# url as arg1
+# only url as arg1
 if [ $# -ne 1 ]; then
   echo "Usage:"
   echo "  yda url"
@@ -12,14 +12,17 @@ if [ $# -ne 1 ]; then
 fi
 url="$1"
 
-# output file
-if echo "$url" | grep -E "[?&]+list="; then
-  playlist="--yes-playlist"
-  output="%(playlist)s/%(playlist_index)s-%(title)s.%(ext)s"
-else
-  playlist="--no-playlist"
-  output="%(title)s.%(ext)s"
-fi
+# audio output file
+case $url in
+  *[\?\&]list=*)
+    playlist="--yes-playlist"
+    output="%(playlist)s/%(playlist_index)s-%(title)s.%(ext)s"
+    ;;
+  *)
+    playlist="--no-playlist"
+    output="%(title)s.%(ext)s"
+    ;;
+esac
 
 # download the audio file
 exec youtube-dl \
