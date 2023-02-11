@@ -38,24 +38,18 @@ case $arg in
     ;;
 esac
 
-# default sink
-sink=$(pacmd list-sinks | awk '/\* index: / { print $NF }')
-if ! [ "$sink" -eq "$sink" ] 2>/dev/null; then
-  panic "Error: default sink is non-numeric"
-fi
-
 # options
 case $arg in
   up)
-    pactl set-sink-volume "$sink" +${voladjust}%
+    pactl set-sink-volume "@DEFAULT_SINK@" +${voladjust}%
     ;;
   down)
-    pactl set-sink-volume "$sink" -${voladjust}%
+    pactl set-sink-volume "@DEFAULT_SINK@" -${voladjust}%
     ;;
   restore)
-    pactl set-sink-volume "$sink" ${volmaster}%
+    pactl set-sink-volume "@DEFAULT_SINK@" ${volmaster}%
     ;;
   toggle)
-    pactl set-sink-mute "$sink" toggle
+    pactl set-sink-mute "@DEFAULT_SINK@" toggle
     ;;
 esac
