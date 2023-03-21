@@ -5,7 +5,7 @@
 set -eu
 
 progname="weather"
-city="$*"
+city=$(echo "$*" | sed 's/[[:space:]]/%20/g')
 
 # display help if no arguments supplied
 if [ $# -eq 0 ]; then
