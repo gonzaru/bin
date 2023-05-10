@@ -6,15 +6,33 @@ set -eu
 
 # default window manager
 wm="dwm"
-wmdir="${HOME}/opt/dwm"
+wmdir="${HOME}/opt/${wm}"
 
-cd "$wmdir" || exit 1
+# shows the message and exits the program
+panic() {
+  if command -v dmenu; then
+    echo "$@" | dmenu
+  else
+    echo "$@" 1>&2
+  fi
+  exit 1
+}
+
+# go to window manager directory
+cd "$wmdir" || panic "Error: ${wmdir} no such file or directory"
+
+# ensure that these programs exist
+programs="dmenu make xdotool"
+for program in $programs; do
+  if ! command -v "$program" >/dev/null 2>&1; then
+    panic "Error: program $program is missing!"
+  fi
+done
 
 # confirm reload
 if [ "$(printf 'no\nyes' | dmenu -p "Do you want to reload ${wm}?")" = "yes" ]; then
-  if ! ./make.sh; then
-    echo "$wm compile error!" | dmenu
-    exit 1
+  if ! { make clean && make && strip ${wm}; }; then
+    panic "Error: $wm compile error!"
   fi
   # simulate keyboard press to quit $wm
   xdotool key Super_L+Shift_L+q
