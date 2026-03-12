@@ -6,11 +6,12 @@ set -eu
 
 # settings
 progname="wmscreenshot"                       # program name
-shotdir=${HOME}/screenshots                   # directory to store screenshot files
+shotdir=${HOME}/Pictures/Screenshots          # directory to store screenshot files
 extension="png"                               # default screenshot extension
 curdate=$(date '+%Y%m%d-%H%M%S')              # current date
 shotfile="screenshot-${curdate}.${extension}" # screenshot name
 quality=75                                    # quality of the the screenshot, default: 75
+clipboard="true"                              # copy the image to clipboard, default: true
 
 # help usage info
 help() {
@@ -61,8 +62,25 @@ renameshot() {
   mv "${shotdir}/${shotfile}" "${shotdir}/${newname}"
 }
 
+# do screenshot
+screenshot() {
+  if [ "$clipboard" = "true" ]; then
+    scrot "$@" -e "xclip -selection clipboard -t image/png -i \"${shotdir}/${shotfile}\""
+  else
+    scrot "$@"
+  fi
+  renameshot
+}
+
 # command line argument
 arg="$1"
+
+# check extra tools
+command -v scrot >/dev/null 2>&1 || panic "scrot is not installed"
+command -v slop >/dev/null 2>&1 || panic "slop is not installed"
+if [ "$clipboard" = "true" ]; then
+  command -v xclip >/dev/null 2>&1 || panic "xclip is not installed"
+fi
 
 # make sure that $shotdir exists
 if [ ! -d "$shotdir" ]; then
@@ -74,12 +92,10 @@ case $arg in
   select)
     # add small time to avoid giblib error: couldn't grab keyboard
     sleep 0.2
-    scrot -s -q $quality "${shotdir}/${shotfile}"
-    renameshot
+    screenshot -f -a "$(slop -o -f '%x,%y,%w,%h')" -q "$quality" "${shotdir}/${shotfile}"
     ;;
   full)
-    scrot -q $quality "${shotdir}/${shotfile}"
-    renameshot
+    screenshot -q "$quality" "${shotdir}/${shotfile}"
     ;;
   *)
     panic "$(help)"
